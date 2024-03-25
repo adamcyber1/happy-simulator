@@ -11,12 +11,8 @@ A framework for building simulations.
 pip install happysimulator
 ```
 
-```python
-
-```
-
 ## Maintainers
-- [Adam] (https://github.com/adamcyber1)
+- [AdamCyber1](https://github.com/adamcyber1)
 
 ## Tutorials 
 
