@@ -10,9 +10,10 @@ class Event(ABC):
         self.time = time
         self.name = name
         self.callback = callback
+        self._hash = hash(self.name + str(uuid.uuid4()))
 
     def __hash__(self):
-        return hash(self.name + str(uuid.uuid4()))
+        return self._hash
 
     # needed for usage in heap to break tiebreakers for time. In theory, we could add different event
     # priorities in the future.
