@@ -15,8 +15,6 @@ class Event(ABC):
     def __hash__(self):
         return self._hash
 
-    # needed for usage in heap to break tiebreakers for time. In theory, we could add different event
-    # priorities in the future.
     def __eq__(self, other):
         if not isinstance(other, Event):
             return NotImplemented
