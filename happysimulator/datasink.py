@@ -10,5 +10,9 @@ class DataSink(ABC):
         pass
 
     @abstractmethod
-    def print_csv(self):
+    def generate_csv(self) -> str:
+        pass
+
+    @abstractmethod
+    def save_csv(self, filename: str):
         pass

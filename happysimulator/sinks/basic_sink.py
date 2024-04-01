@@ -23,11 +23,8 @@ class BasicSink(DataSink):
             new_row = {'TIME_SECONDS': time.to_seconds(), self.stat_names[0]: stats}
         self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
 
-    def generate_csv_string(self) -> str:
+    def generate_csv(self) -> str:
         return self.df.to_csv(index=False)
-
-    def print_csv(self):
-        print(self.generate_csv_string())
 
     def save_csv(self, filename: str):
         self.df.to_csv(filename, index=False)

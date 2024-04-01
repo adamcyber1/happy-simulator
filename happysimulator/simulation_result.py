@@ -10,8 +10,12 @@ class SimulationResult:
         self._sinks = sinks
 
     def print_summary(self):
-        pass
+        raise NotImplementedError("Implement me!")
 
+    """
+    This code does its best to pretty-display the simulation result, but ultimately you may need to work with the 
+    raw CSV / dataframe data to create graphics that best suit your need.
+    """
     def display_graphs(self):
         num_plots = len(self._sinks)
         num_columns = int(num_plots ** 0.5) + 1
@@ -48,7 +52,7 @@ class SimulationResult:
 
     def print_csv(self):
          for sink in self._sinks:
-             sink.print_csv()
+             print(sink.generate_csv())
 
     def save_graphs(self, directory: str):
         pass
