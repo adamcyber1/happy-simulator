@@ -1,6 +1,6 @@
 from typing import Callable
 
-from happysimulator import ArrivalDistribution
+from happysimulator import arrival_distribution
 from happysimulator.event import Event
 from happysimulator.events.GenerateEvent import GenerateEvent
 from happysimulator.profile import Profile

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from happysimulator.ArrivalDistribution import ArrivalDistribution
+from happysimulator.arrival_distribution import ArrivalDistribution
 from happysimulator.time import Time
 
 
