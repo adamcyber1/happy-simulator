@@ -2,7 +2,7 @@ from typing import Callable
 
 from happysimulator import arrival_distribution
 from happysimulator.event import Event
-from happysimulator.events.GenerateEvent import GenerateEvent
+from happysimulator.events.generate_event import GenerateEvent
 from happysimulator.profile import Profile
 from happysimulator.time import Time
 
