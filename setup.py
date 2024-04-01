@@ -17,8 +17,8 @@ setup(
     keywords=['simulator', 'happy', 'network', 'distributed', 'client', 'server', 'queue'],
     packages=find_packages(),
     install_requires=[
-        '',
-        ''
+        'matplotlib',
+        'pandas'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

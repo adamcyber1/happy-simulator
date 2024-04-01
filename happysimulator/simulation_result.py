@@ -1,3 +1,5 @@
+import math
+
 from matplotlib import pyplot as plt
 
 from happysimulator.datasink import DataSink
@@ -18,8 +20,13 @@ class SimulationResult:
     """
     def display_graphs(self):
         num_plots = len(self._sinks)
-        num_columns = int(num_plots ** 0.5) + 1
-        num_rows = num_plots // num_columns + (num_plots % num_columns > 0)
+
+        # TODO improve this function, its very hacky
+        if num_plots == 4:
+            num_columns = num_rows = 2
+        else:
+            num_columns = int(math.ceil(num_plots ** 0.5))
+            num_rows = num_plots // num_columns + (num_plots % num_columns > 0)
 
         plt.figure(figsize=(10 * num_columns, 6 * num_rows))
         plt.rcParams['figure.facecolor'] = 'lightgrey'
