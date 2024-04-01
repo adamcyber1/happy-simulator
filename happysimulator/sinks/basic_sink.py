@@ -1,8 +1,10 @@
 import pandas as pd
-from typing import Union, List
+from typing import Union, List, Optional
 
 from happysimulator.datasink import DataSink
 from happysimulator.time import Time
+from happysimulator.utils.filename import sanitize_filename
+
 
 class BasicSink(DataSink):
     def __init__(self, name: str, stat_names: Union[str, List[str]]):
@@ -24,7 +26,16 @@ class BasicSink(DataSink):
         self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
 
     def generate_csv(self) -> str:
-        return self.df.to_csv(index=False)
+        return f"{self.name}\n" + self.df.to_csv(index=False)
 
-    def save_csv(self, filename: str):
-        self.df.to_csv(filename, index=False)
+    def save_csv(self, directory: Optional[str] = None, filepath: Optional[str] = None):
+        if directory is not None and filepath is not None:
+            raise ValueError("Set one of either directory or filepath but not both")
+
+        if directory is not None:
+            self.df.to_csv(f"{directory}/{sanitize_filename(self.name)}.csv", index=False)
+            return
+
+        if filepath is not None:
+            self.df.to_csv(filepath, index=False)
+            return

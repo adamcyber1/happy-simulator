@@ -57,5 +57,6 @@ class SimulationResult:
     def save_graphs(self, directory: str):
         pass
 
-    def save_csvs(self, direction: str):
-        pass
+    def save_csvs(self, directory: str):
+        for sink in self._sinks:
+            sink.save_csv(directory=directory)

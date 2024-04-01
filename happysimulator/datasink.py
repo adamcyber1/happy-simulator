@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Union, Optional
 
 from happysimulator.time import Time
 
@@ -14,5 +14,5 @@ class DataSink(ABC):
         pass
 
     @abstractmethod
-    def save_csv(self, filename: str):
+    def save_csv(self, directory: Optional[str] = None, filepath: Optional[str] = None):
         pass
