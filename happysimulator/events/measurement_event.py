@@ -1,5 +1,6 @@
 from typing import Union, List
 
+from happysimulator.datasink import DataSink
 from happysimulator.event import Event
 from happysimulator.stat import Stat
 from happysimulator.time import Time

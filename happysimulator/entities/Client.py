@@ -7,13 +7,13 @@ from happysimulator.events.measurement_event import MeasurementEvent
 class Client(Entity):
     def __init__(self, name: str):
         super().__init__(name)
-        self._requests = Data()
+        self._requests_count = Data()
         self._requests_latency = Data()
         self._responses = Data()
 
     def send_request(self, request: Event) -> list[Event]:
         print(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Client sending request")
-        self._requests.add_stat(1, request.time)
+        self._requests_count.add_stat(1, request.time)
 
         request.client_send_request_time = request.time
         request.callback = request.server.start_request
@@ -31,7 +31,7 @@ class Client(Entity):
     def requests_stats(self, event: MeasurementEvent) -> list[Event]:
         print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for requests_stats.")
 
-        self.sink_data(self._requests, event) # TODO implement all of the above and below logic
+        self.sink_data(self._requests_count, event) # TODO implement all of the above and below logic
 
         return [] # measurement events don't generate additional events
 
@@ -39,3 +39,8 @@ class Client(Entity):
         print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request latency")
 
         self.sink_data(self._requests_latency, event)
+
+    def requests_count(self, event: MeasurementEvent) -> list[Event]:
+        print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request count")
+
+        self.sink_data(self._requests_count, event)

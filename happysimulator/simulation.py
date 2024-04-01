@@ -19,12 +19,12 @@ def create_generators(measurements: list[Measurement], end_time):
         def create_measurement_event_func(time: Time, measurement=measurement):
             return [MeasurementEvent(name=measurement.name, callback=measurement.func, time=time, interval=measurement.interval, stat=measurement.stat, sink=measurement.sinks)]
 
-        generators.append(Generator(name=f"{measurement.name}_generator", end_time=end_time, func=create_measurement_event_func, distribution=ArrivalDistribution.CONSTANT, profile=ConstantProfile.from_period(measurement.interval)))
+        generators.append(Generator(name=f"{measurement.name}_generator", func=create_measurement_event_func, distribution=ArrivalDistribution.CONSTANT, profile=ConstantProfile.from_period(measurement.interval)))
 
     return generators
 
 class Simulation:
-    def __init__(self, end_time: Time, entities: list[Entity], generators: list[Generator], measurements: list[Measurement]):
+    def __init__(self, end_time: Time, generators: list[Generator], measurements: list[Measurement], entities: list[Entity] = None):
         self._end_time = end_time
         self._entities = entities
         self._generators = generators

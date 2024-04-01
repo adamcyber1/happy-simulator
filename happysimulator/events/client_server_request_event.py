@@ -1,11 +1,17 @@
 from happysimulator.distribution.constant_latency import ConstantLatency
+from happysimulator.entities.Client import Client
+from happysimulator.entities.Server import Server
 from happysimulator.event import Event
 from happysimulator.latency_distribution import LatencyDistribution
 from happysimulator.time import Time
+from happysimulator.utils.ids import get_id
 
 
 class Request(Event):
-    def __init__(self, time: Time, client: Client, server: Server, callback, name: str, network_latency: LatencyDistribution = ConstantLatency(Time.from_seconds(0.1))):
+    def __init__(self, time: Time, client: Client, server: Server, callback, name: str = None, network_latency: LatencyDistribution = ConstantLatency(Time.from_seconds(0.1))):
+        if name is None:
+            name = f"Request-{get_id()}"
+
         super().__init__(time, name, callback)
         self.client = client
         self.server = server

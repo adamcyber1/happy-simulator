@@ -1,10 +1,12 @@
 from typing import Callable
 
 from happysimulator import arrival_distribution
+from happysimulator.arrival_distribution import ArrivalDistribution
 from happysimulator.event import Event
 from happysimulator.events.generate_event import GenerateEvent
 from happysimulator.profile import Profile
 from happysimulator.time import Time
+from happysimulator.utils.ids import get_id
 
 """
 Generators are only approximate because events are what generate the next event, so if your dynamic rate 
@@ -15,13 +17,15 @@ As one idea, we could pre-populate the event heap with events (not great for mem
 Another idea, we could have another internal generator that re-evaluates the rate every N milliseconds.
 """
 class Generator:
-    def __init__(self, end_time: Time, func: Callable[[Time], list[Event]], profile: Profile, distribution: ArrivalDistribution, name: str):
+    def __init__(self, func: Callable[[Time], list[Event]], profile: Profile, distribution: ArrivalDistribution, name: str = None):
         self._func = func
         self._profile = profile
         self._distribution = distribution
-        self._end_time = end_time
         self._nmb_events = 0
-        self._name = name # TODO generate this name using profile and distribution
+
+        if name is None:
+            name = f"Generator-{get_id()}"
+        self._name = name
 
     def generate(self, event: GenerateEvent) -> list[Event]:
         print(f"[{event.time.to_seconds()}][{event.name}] Generating event")

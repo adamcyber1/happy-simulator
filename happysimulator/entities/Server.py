@@ -49,3 +49,8 @@ class Server(Entity):
         print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request latency")
 
         self.sink_data(self._server_side_latency, event)
+
+    def requests_count(self, event: MeasurementEvent) -> list[Event]:
+        print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request count")
+
+        self.sink_data(self._requests_count, event)
