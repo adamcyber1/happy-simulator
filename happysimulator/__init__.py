@@ -1,7 +1,7 @@
 import logging
 import os
 
-level = os.environ.get("LOGLEVEL", "INFO")
+level = os.environ.get("HS_LOGGING", "INFO")
 
 def get_logging_level(level):
     switcher = {
