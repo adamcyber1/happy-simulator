@@ -1,5 +1,4 @@
 from happysimulator.arrival_distribution import ArrivalDistribution
-from happysimulator.distribution.constant_latency import ConstantLatency
 from happysimulator.distribution.exponential_latency import ExponentialLatency
 from happysimulator.entities.client import Client
 from happysimulator.entities.server import Server

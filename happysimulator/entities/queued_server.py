@@ -2,12 +2,15 @@
 """
 A server with a queue. There is an extra step before requests are started: the work must go into a queue
 """
+import logging
+
 from happysimulator.entities.queue import Queue
 from happysimulator.entities.server import Server
 from happysimulator.event import Event
 from happysimulator.events.queue_event import QueueEvent
 from happysimulator.latency_distribution import LatencyDistribution
 
+logger = logging.getLogger(__name__)
 
 class QueuedServer(Server):
     def __init__(self, name: str, server_latency: LatencyDistribution, threads: int, queue: Queue):
@@ -19,7 +22,7 @@ class QueuedServer(Server):
     def start_request(self, request: Event) -> list[Event]:
         # instead of processing this request, put it in the queue.
         # If I currently have capacity, I will also schedule a queue Pop.
-        print(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Queued Server received request.")
+        logger.info(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Queued Server received request.")
 
         queued_event = request
         queued_event.callback = super().start_request # so that when we get this event back, we skip the queueing
@@ -31,7 +34,7 @@ class QueuedServer(Server):
 
 
     def done_request(self, request: Event) -> list[Event]:
-        print(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Queued Server completed request. Calling server.")
+        logger.info(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Queued Server completed request. Calling server.")
 
         events = super().done_request(request)
 

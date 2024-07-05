@@ -1,3 +1,4 @@
+import logging
 from typing import Callable
 
 from happysimulator import arrival_distribution
@@ -7,6 +8,8 @@ from happysimulator.events.generate_event import GenerateEvent
 from happysimulator.profile import Profile
 from happysimulator.time import Time
 from happysimulator.utils.ids import get_id
+
+logger = logging.getLogger(__name__)
 
 """
 Generators are only approximate because events are what generate the next event, so if your dynamic rate 
@@ -28,7 +31,7 @@ class Generator:
         self._name = name
 
     def generate(self, event: GenerateEvent) -> list[Event]:
-        print(f"[{event.time.to_seconds()}][{event.name}] Generating event")
+        logger.info(f"[{event.time.to_seconds()}][{event.name}] Generating event")
 
         rate_per_second = self._profile.get_rate(event.time)
         next_generate_time = self._distribution.get_next_arrival_time(event.time, rate_per_second)

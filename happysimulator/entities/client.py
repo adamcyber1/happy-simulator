@@ -1,8 +1,11 @@
+import logging
+
 from happysimulator.data import Data
 from happysimulator.entity import Entity
 from happysimulator.event import Event
 from happysimulator.events.measurement_event import MeasurementEvent
 
+logger = logging.getLogger(__name__)
 
 class Client(Entity):
     def __init__(self, name: str):
@@ -12,7 +15,7 @@ class Client(Entity):
         self._responses = Data()
 
     def send_request(self, request: Event) -> list[Event]:
-        print(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Client sending request")
+        logger.info(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Client sending request")
         self._requests_count.add_stat(1, request.time)
 
         request.client_send_request_time = request.time
@@ -22,25 +25,25 @@ class Client(Entity):
         return [request]
 
     def receive_response(self, request: Event) -> list[Event]:
-        print(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Client received response")
+        logger.info(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Client received response")
         self._responses.add_stat(1, request.time)
         self._requests_latency.add_stat((request.time - request.client_send_request_time).to_seconds(), request.time)
 
         return [] # no further action needed for this request
 
     def requests_stats(self, event: MeasurementEvent) -> list[Event]:
-        print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for requests_stats.")
+        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for requests_stats.")
 
         self.sink_data(self._requests_count, event) # TODO implement all of the above and below logic
 
         return [] # measurement events don't generate additional events
 
     def requests_latency(self, event: MeasurementEvent) -> list[Event]:
-        print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request latency")
+        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request latency")
 
         self.sink_data(self._requests_latency, event)
 
     def requests_count(self, event: MeasurementEvent) -> list[Event]:
-        print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request count")
+        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request count")
 
         self.sink_data(self._requests_count, event)

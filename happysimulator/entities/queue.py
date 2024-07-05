@@ -1,3 +1,5 @@
+import logging
+
 import queue
 
 from happysimulator.data import Data
@@ -6,6 +8,7 @@ from happysimulator.event import Event
 from happysimulator.events.measurement_event import MeasurementEvent
 from happysimulator.events.queue_event import QueueEvent
 
+logger = logging.getLogger(__name__)
 
 class Queue(Entity):
 
@@ -21,24 +24,24 @@ class Queue(Entity):
 
 
     def put(self, event: QueueEvent) -> list[Event]:
-        print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Queue put called. Depth before put is {self._queue.qsize()}")
+        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Queue put called. Depth before put is {self._queue.qsize()}")
         self._depth.add_stat(self._queue.qsize(), event.time)
         self._puts.add_stat(1, event.time)
 
         self._queue.put(event.queued_event)
 
         if event.immediate_pop:
-            print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Server has capacity when submitting to queue, secheduling a pop immediately.")
+            logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Server has capacity when submitting to queue, secheduling a pop immediately.")
             return [Event(name="QueuePop", time=event.time, callback=self.pop)]
 
         return [] # adding to a queue does not trigger anything under normal circumstances
 
     def pop(self, event: Event) -> list[Event]:
-        print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Queue pop called. Depth before pop is {self._queue.qsize()}")
+        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Queue pop called. Depth before pop is {self._queue.qsize()}")
 
 
         if self._queue.empty():
-            print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Queue is empty, will not pop anything.")
+            logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Queue is empty, will not pop anything.")
             return []
 
         popped_event = self._queue.get(block=False)
@@ -51,9 +54,9 @@ class Queue(Entity):
         return [popped_event]
 
     def depth(self, event: MeasurementEvent) -> list[Event]:
-        print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for queue depth. Current depth is {self._queue.qsize}")
+        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for queue depth. Current depth is {self._queue.qsize}")
         self.sink_data(self._depth, event)
 
     def queue_time(self, event: MeasurementEvent) -> list[Event]:
-        print(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for queue time.")
+        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for queue time.")
         self.sink_data(self._queue_time, event)
