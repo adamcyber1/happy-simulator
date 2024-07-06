@@ -1,5 +1,5 @@
 # happy-simulator
-The goal of this project is to promote a shared understanding of complicated systems through simulation, analysis, and visualization. 
+Simulate event driven systems in a few lines of Python code.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
 [![Downloads](https://pepy.tech/badge/happysimulator)](https://pepy.tech/project/happysimulator)
@@ -9,6 +9,8 @@ The goal of this project is to promote a shared understanding of complicated sys
 ```sh
 pip install happysimulator
 ```
+
+To configure logging, set your `HS_LOGGING` environment variable to `DEBUG`, `INFO`, `WARNING`, `ERROR`. Default is `INFO`.
 
 ## Maintainers
 - [AdamCyber1](https://github.com/adamcyber1)
@@ -20,3 +22,5 @@ See `examples/` folder for examples.
 * Add Timeout Client which will time out requests and log a failure, and optionally retry 
 * Add oX and uX statistics (i.e. over X and under X)
 * Add concurrency limited server example
+* Add Java ExecutorService pipeline simulation components and example
+* Full unit test coverage
