@@ -1,8 +1,28 @@
 from ..profile import Profile
 from ..time import Time
 
-
 class SpikeProfile(Profile):
+    """
+    SpikeProfile simulates an event profile with a spike pattern.
+
+    Parameters:
+    - rampup_start (Time): The time when the ramp-up phase starts.
+    - rampdown_start (Time): The time when the ramp-down phase starts.
+    - starting_rate (float): The initial rate of requests before the ramp-up.
+    - rampup_factor (float): The rate at which the request rate increases during the ramp-up phase.
+    - rampdown_factor (float, optional): The rate at which the request rate decreases during the ramp-down phase. Defaults to 1.
+
+    Attributes:
+    - rampup_start (Time): The time when the ramp-up phase starts.
+    - rampdown_start (Time): The time when the ramp-down phase starts.
+    - starting_rate (float): The initial rate of requests before the ramp-up.
+    - rampup_factor (float): The rate at which the request rate increases during the ramp-up phase.
+    - rampdown_factor (float): The rate at which the request rate decreases during the ramp-down phase.
+    - peak_rate (float): The peak request rate during the ramp-down phase.
+
+    Methods:
+    - get_rate(time: Time) -> float: Returns the request rate at a given time.
+    """
     def __init__(self, rampup_start: Time, rampdown_start: Time, starting_rate: float, rampup_factor: float,
                  rampdown_factor: float = 1):
         self.rampup_start = rampup_start
@@ -13,6 +33,15 @@ class SpikeProfile(Profile):
         self.peak_rate = starting_rate + (rampdown_start - rampup_start).to_seconds() * rampup_factor
 
     def get_rate(self, time: Time) -> float:
+        """
+        Returns the request rate at a given time.
+
+        Parameters:
+        - time (Time): The time at which to get the request rate.
+
+        Returns:
+        - float: The request rate at the specified time.
+        """
         if time < self.rampup_start:
             return self.starting_rate
         elif self.rampup_start <= time < self.rampdown_start:

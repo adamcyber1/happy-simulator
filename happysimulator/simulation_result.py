@@ -21,7 +21,7 @@ class SimulationResult:
     def display_graphs(self):
         num_plots = len(self._sinks)
 
-        # TODO improve this function, its very hacky
+        # Calculate the number of columns and rows for the subplot grid
         if num_plots == 4:
             num_columns = num_rows = 2
         else:
@@ -32,22 +32,31 @@ class SimulationResult:
         plt.rcParams['figure.facecolor'] = 'lightgrey'
         plt.rcParams['axes.facecolor'] = 'lightgrey'
 
+        # Determine global x-axis range
+        global_x_min = float('inf')
+        global_x_max = float('-inf')
+        for sink in self._sinks:
+            x_min = sink.df['TIME_SECONDS'].min()
+            x_max = sink.df['TIME_SECONDS'].max()
+            if x_min < global_x_min:
+                global_x_min = x_min
+            if x_max > global_x_max:
+                global_x_max = x_max
+
         for i, sink in enumerate(self._sinks, start=1):
             ax = plt.subplot(num_rows, num_columns, i)
             min_values = []
             max_values = []
             for stat_name in sink.stat_names:
                 ax.plot(sink.df['TIME_SECONDS'], sink.df[stat_name], marker='o', markersize=4, linestyle='-', label=stat_name)
-                # Collecting min and max values across all stats for this sink
                 min_values.append(sink.df[stat_name].min())
                 max_values.append(sink.df[stat_name].max())
 
-            # Determining the global min and max for the current sink's stats
             global_min = min(min_values)
             global_max = max(max_values)
 
-            # Setting y-axis limits to include all stats
-            ax.set_ylim(0.9 * global_min, 1.1 * global_max)  # Adjusted to show a bit more space around the min/max values
+            ax.set_xlim(global_x_min, global_x_max)  # Set global x-axis limits
+            ax.set_ylim(0.9 * global_min, 1.1 * global_max)
             ax.set_title(f"{sink.name} [{', '.join(sink.stat_names)}]", fontsize=16)
             ax.set_xlabel('Time (Seconds)', fontsize=14)
             ax.set_ylabel('Value', fontsize=14)

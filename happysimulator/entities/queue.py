@@ -54,7 +54,7 @@ class Queue(Entity):
         return [popped_event]
 
     def depth(self, event: MeasurementEvent) -> list[Event]:
-        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for queue depth. Current depth is {self._queue.qsize}")
+        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for queue depth. Current depth is {self._queue.qsize()}")
         self.sink_data(self._depth, event)
 
     def queue_time(self, event: MeasurementEvent) -> list[Event]:

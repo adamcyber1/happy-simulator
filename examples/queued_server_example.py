@@ -30,7 +30,7 @@ request_generator = Generator(func=lambda time: [Request(time=time, client=clien
                               distribution=ArrivalDistribution.POISSON)
 
 simulation_run_result = Simulation(
-    end_time=Time.from_seconds(60),
+    end_time=Time.from_seconds(180),
     entities=[client, server],
     generators=[request_generator],
     measurements=[
@@ -39,8 +39,8 @@ simulation_run_result = Simulation(
                     stats=[Stat.SUM],
                     interval=Time.from_seconds(1)),
         Measurement(name="Client Latency",
-                    func=server.requests_latency,
-                    stats=[Stat.SUM],
+                    func=client.requests_latency,
+                    stats=[Stat.AVG],
                     interval=Time.from_seconds(1)),
         Measurement(name="Server Latency",
                     func=server.requests_latency,
