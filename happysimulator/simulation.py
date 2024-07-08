@@ -3,7 +3,7 @@ from happysimulator.entity import Entity
 from happysimulator.event_heap import EventHeap
 from happysimulator.events.generate_event import GenerateEvent
 from happysimulator.events.measurement_event import MeasurementEvent
-from happysimulator.generator import Generator
+from happysimulator.generator import Generator, logger
 from happysimulator.measurement import Measurement
 from happysimulator.profiles import ConstantProfile
 from happysimulator.simulation_result import SimulationResult
@@ -42,6 +42,7 @@ class Simulation:
         time = Time.from_seconds(0)
 
         while self._event_heap.has_events() and self._end_time > time:
+            logger.debug(f"Event heap size before pop: {self._event_heap.size()}")
             event = self._event_heap.pop() # heap is in descending order,
             time = event.time # moves time forward in the sim
 

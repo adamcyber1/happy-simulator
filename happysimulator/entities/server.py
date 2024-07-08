@@ -1,5 +1,6 @@
 import logging
 import random
+from typing import Callable
 
 from happysimulator.data import Data
 from happysimulator.distribution.constant_latency import ConstantLatency
@@ -17,11 +18,13 @@ logger = logging.getLogger(__name__)
 class Server(Entity):
     def __init__(self, name: str,
                  server_latency: LatencyDistribution = ConstantLatency(Time.from_seconds(0.1)),
-                 failure_rate: Profile = ConstantProfile(rate=0.0)):
+                 failure_rate: Profile = ConstantProfile(rate=0.0),
+                 concurrency_penalty_func: Callable[[int], float] = lambda x: 0.0):
         super().__init__(name)
 
         # config
-        self._failure_rate = failure_rate # TODO: we could make this a lambda that accepts a request if needed
+        self._failure_rate = failure_rate
+        self._concurrency_penalty_func = concurrency_penalty_func
 
         # stats
         self._latency = server_latency
@@ -40,7 +43,9 @@ class Server(Entity):
         request.server_receive_request_time = request.time
 
         request.callback = self.done_request
-        request.time = request.time + self._latency.get_latency(request.time)
+
+        latency = self._latency + self._concurrency_penalty_func(self._concurrent_requests)
+        request.time = request.time + latency
 
         return [request]
 
@@ -60,26 +65,26 @@ class Server(Entity):
         return [request]
 
     def concurrency_stats(self, event: MeasurementEvent) -> list[Event]:
-        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Server measurement event for concurrency_stats.")
+        logger.debug(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Server measurement event for concurrency_stats.")
         self.sink_data(self._concurrent_requests, event)
         return []
 
     def requests_latency(self, event: MeasurementEvent) -> list[Event]:
-        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request latency")
+        logger.debug(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request latency")
 
         self.sink_data(self._server_side_latency, event)
 
     def requests_count(self, event: MeasurementEvent) -> list[Event]:
-        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request count")
+        logger.debug(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for request count")
 
         self.sink_data(self._requests_count, event)
 
     def successful_requests_count(self, event: MeasurementEvent) -> list[Event]:
-        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for successful request count")
+        logger.debug(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for successful request count")
 
         self.sink_data(self._successful_requests_count, event)
 
     def failed_requests_count(self, event: MeasurementEvent) -> list[Event]:
-        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for failed request count")
+        logger.debug(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for failed request count")
 
         self.sink_data(self._failed_requests_count, event)

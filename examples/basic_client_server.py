@@ -23,7 +23,7 @@ server = Server(name="Expo", server_latency=ExponentialLatency(Time.from_seconds
 network_latency = ExponentialLatency(Time.from_seconds(0.5))
 
 # create a generator profile which brings the simulation to life by telling the client to make requests to the server
-# in this case, with a varying rated defined by a sinusoid, and exponentially distributed requests
+# in this case, with a varying rate defined by a sinusoid, and exponentially distributed requests
 request_generator = Generator(func=lambda time: [Request(time=time, client=client, server=server, callback=client.send_request, network_latency=network_latency)],
                               profile=SinusoidProfile(shift=10, amplitude=5, period=Time.from_seconds(30)),
                               distribution=ArrivalDistribution.POISSON)

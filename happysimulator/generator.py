@@ -11,6 +11,7 @@ from happysimulator.utils.ids import get_id
 
 logger = logging.getLogger(__name__)
 
+
 """
 Generators are only approximate because events are what generate the next event, so if your dynamic rate 
 function ever has a rate of 0 - the next event never comes. There are ways to fix this, but usually generators

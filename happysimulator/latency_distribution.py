@@ -13,7 +13,6 @@ class LatencyDistribution(ABC):
         pass
 
     def __add__(self, additional: float):
-        # Create a deep copy to ensure we don't modify the original object
         new_instance = copy.deepcopy(self)
         new_instance._mean_latency += additional
         return new_instance
