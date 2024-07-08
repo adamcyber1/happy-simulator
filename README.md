@@ -18,9 +18,8 @@ To configure logging, set your `HS_LOGGING` environment variable to `DEBUG`, `IN
 See `examples/` folder for examples.
 
 ## Development Plan
-* Add Timeout Client which will time out requests and log a failure, and optionally retry 
 * Add oX and uX statistics (i.e. over X and under X)
-* Add concurrency limited server example
+* Add Server lambdas for arbitrarily complex server behavior
 * Add Java ExecutorService pipeline simulation components and example
 * Load balancer entity
 * Retry explosion example 
