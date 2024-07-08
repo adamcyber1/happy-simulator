@@ -22,4 +22,6 @@ See `examples/` folder for examples.
 * Add oX and uX statistics (i.e. over X and under X)
 * Add concurrency limited server example
 * Add Java ExecutorService pipeline simulation components and example
+* Load balancer entity
+* Retry explosion example 
 * Full unit test coverage

@@ -52,11 +52,11 @@ class SimulationResult:
                 min_values.append(sink.df[stat_name].min())
                 max_values.append(sink.df[stat_name].max())
 
-            global_min = min(min_values)
-            global_max = max(max_values)
+            global_y_min = max(0, min(min_values))
+            global_y_max = max(0, max(max_values))
 
             ax.set_xlim(global_x_min, global_x_max)  # Set global x-axis limits
-            ax.set_ylim(0.9 * global_min, 1.1 * global_max)
+            ax.set_ylim(0.9 * global_y_min, 1.1 * global_y_max)
             ax.set_title(f"{sink.name} [{', '.join(sink.stat_names)}]", fontsize=16)
             ax.set_xlabel('Time (Seconds)', fontsize=14)
             ax.set_ylabel('Value', fontsize=14)

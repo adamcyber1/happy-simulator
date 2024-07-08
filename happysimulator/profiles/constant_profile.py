@@ -4,7 +4,7 @@ from ..time import Time
 
 class ConstantProfile(Profile):
     def __init__(self, rate: float):
-        if rate <= 0:
+        if rate < 0.0:
             raise ValueError("Rate must be positive.")
 
         self._rate = rate

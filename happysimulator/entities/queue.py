@@ -12,11 +12,10 @@ logger = logging.getLogger(__name__)
 
 class Queue(Entity):
 
-    # TODO: size doesn't do anything yet, make the queue discard events when depth > size
     def __init__(self, name: str, size: int = 0):
         super().__init__(name)
         self._size = size
-        self._queue = queue.Queue(size)
+        self._queue = queue.Queue(0) # always make it unbounded, we handle the size ourselves
         self._puts = Data()
         self._pops = Data()
         self._depth = Data()
@@ -24,14 +23,14 @@ class Queue(Entity):
 
 
     def put(self, event: QueueEvent) -> list[Event]:
-        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Queue put called. Depth before put is {self._queue.qsize()}")
+        logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}][{event.queued_event.name}] Queue put called. Depth before put is {self._queue.qsize()}")
         self._depth.add_stat(self._queue.qsize(), event.time)
         self._puts.add_stat(1, event.time)
 
         self._queue.put(event.queued_event)
 
         if event.immediate_pop:
-            logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Server has capacity when submitting to queue, secheduling a pop immediately.")
+            logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}][{event.queued_event.name}] Server has capacity when submitting to queue, secheduling a pop immediately.")
             return [Event(name="QueuePop", time=event.time, callback=self.pop)]
 
         return [] # adding to a queue does not trigger anything under normal circumstances
@@ -52,6 +51,9 @@ class Queue(Entity):
         self._pops.add_stat(1, event.time)
 
         return [popped_event]
+
+    def has_capacity(self) -> bool:
+        return self._size == 0 or self._queue.qsize() < self._size
 
     def depth(self, event: MeasurementEvent) -> list[Event]:
         logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for queue depth. Current depth is {self._queue.qsize()}")

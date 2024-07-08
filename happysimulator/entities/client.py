@@ -6,18 +6,24 @@ from happysimulator.entity import Entity
 from happysimulator.event import Event
 from happysimulator.events.measurement_event import MeasurementEvent
 from happysimulator.time import Time
+from happysimulator.utils.response_status import ResponseStatus
 
 logger = logging.getLogger(__name__)
 
 class Client(Entity):
-    def __init__(self, name: str, timeout: Optional[Time] = None):
+    def __init__(self, name: str, timeout: Optional[Time] = None, retries: int = 0, retry_delay: Time = Time.from_seconds(0)):
         super().__init__(name)
 
+        # config
         self._timeout = timeout
+        self._retries = retries
+        self._retry_delay = retry_delay
+
+        # stats
         self._requests_count = Data()
         self._successful_requests_count = Data()
         self._failed_requests_count = Data()
-
+        self._timeout_requests_count = Data()
         self._requests_latency = Data()
         self._responses = Data()
 
@@ -37,16 +43,34 @@ class Client(Entity):
         logger.info(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Client received response after {latency} seconds")
         self._responses.add_stat(1, request.time)
 
-        if latency > self._timeout.to_seconds():
+        self._requests_latency.add_stat(latency, request.time)
+
+        request_failed = request.response_status == ResponseStatus.FAIL
+
+        if self._timeout is not None:
+            timed_out = latency > self._timeout.to_seconds()
+            if timed_out:
+                self._timeout_requests_count.add_stat(1, request.time)
+
+            request_failed |= timed_out
+
+        if request_failed:
             self._failed_requests_count.add_stat(1, request.time)
         else:
             self._successful_requests_count.add_stat(1, request.time)
+            return []
 
-        self._requests_latency.add_stat(latency, request.time)
+        # request_failed == True
+        if self._retries > 0 and request.attempt <= self._retries:
+            logger.info(f"[{request.time.to_seconds()}][{self.name}][{request.name}] Client will retry request. Attempt:{request.attempt}. Retries: {self._retries}")
+            request.callback = self.send_request
+            request.time = request.time + self._retry_delay.to_seconds()
+            request.attempt += 1
+            return [request]
 
         return [] # no further action needed for this request
 
-    def requests_stats(self, event: MeasurementEvent) -> list[Event]:
+    def requests_stats(self, event: MeasurementEvent)  -> list[Event]:
         logger.info(f"[{event.time.to_seconds()}][{self.name}][{event.name}] Received measurement event for requests_stats.")
 
         self.sink_data(self._requests_count, event) # TODO implement all of the above and below logic
