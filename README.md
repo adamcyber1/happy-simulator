@@ -88,7 +88,7 @@ There are detailed logs, giving some insight into what the server is up to when 
 Not suprisingly, when the rate increases (peak of the sinusoid), the poisson arrival rate overloads our server, and a queue
 builds up. 
 
-Time to increase our server concurrency! If I increase them to 15 what happens?
+Time to increase our server concurrency! If I increase `threads` in my `QueueServer` to 15 what happens?
 
 ![img.png](img/queuedepth.png)
 
