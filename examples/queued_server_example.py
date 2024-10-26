@@ -13,7 +13,6 @@ from happysimulator.time import Time
 
 client = Client(name="BasicClient")
 
-
 queue = Queue(name="MyQueue") # unbounded FIFO queue
 server = QueuedServer(name="MyQueuedServer",
                       server_latency=ExponentialLatency(Time.from_seconds(0.5)),
@@ -27,10 +26,10 @@ profile = SinusoidProfile(shift=10, amplitude=5, period=Time.from_seconds(20))
 request_number = 0
 request_generator = Generator(func=lambda time: [Request(time=time, client=client, server=server, callback=client.send_request, network_latency=network_latency)],
                               profile=profile,
-                              distribution=ArrivalDistribution.POISSON)
+                              distribution=ArrivalDistribution.CONSTANT)
 
 simulation_run_result = Simulation(
-    end_time=Time.from_seconds(180),
+    end_time=Time.from_seconds(120),
     entities=[client, server],
     generators=[request_generator],
     measurements=[

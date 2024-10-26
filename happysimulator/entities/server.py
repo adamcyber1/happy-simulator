@@ -44,7 +44,7 @@ class Server(Entity):
 
         request.callback = self.done_request
 
-        latency = self._latency + self._concurrency_penalty_func(self._concurrent_requests)
+        latency = self._latency.get_latency(request.time) + self._concurrency_penalty_func(self._concurrent_requests)
         request.time = request.time + latency
 
         return [request]
