@@ -79,11 +79,21 @@ simulation_run_result.display_graphs()
 
 Look at how when the traffic volume peaks, we get some queue build up in the server:
 
-![img.png](img/charts.png)
+![img.png](img/charts.png)!
 
 There are detailed logs, giving some insight into what the server is up to when there is a queue build up:
 
 ![img.png](img/logs.png)
+
+Not suprisingly, when the rate increases (peak of the sinusoid), the poisson arrival rate overloads our server, and a queue
+builds up. 
+
+Time to increase our server concurrency! If I increase them to 15 what happens?
+
+![img.png](img/queuedepth.png)
+
+Much better!
+
 
 ## Development Plan
 * Add oX and uX statistics (i.e. over X and under X)
